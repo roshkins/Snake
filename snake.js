@@ -1,47 +1,68 @@
 var Board = (function () {
 
 	function Board () {
-		this.head = new Board.Segment(0, 0);
+		this.head = new Board.Segment(14, 14);
 		this.lastDirection = null;
-		this.tail = this.head;
 		this.apples = [];
+		this.dimension = 30;
 	};
 
 	Board.Segment = function (x, y) {
 		this.current = { x: x, y: y };
 		this.child = null;
 	}
-	Board.apple = function () {
+
+	Board.apple = function (x, y) {
+
 	}
 
 	//dir is unit vector {x: x, y: y}.
 	Board.prototype.move = function (dir) {
-		if (dir.x === -this.lastDirection.x &&
-				dir.y === -this.lastDirection.y) {
-					console.log("Invalid Direction.");
-					return;
+		if (this.isInvalidDir(dir)) {
+			console.log("Invalid move!");
+			return;
 		}
 
-		var newPos = {x: this.head.x + dir.x, y: this.head.y + dir.y};
+		var newPos = {x: this.head.x + dir.x,
+									y: this.head.y + dir.y};
+
+		if (this.hasApple(dir)) {
+			this.addSegment(newPos);
+		}
+
+		this.slide(dir);
+	}
+
+	Board.prototype.isInvalidDir = function (dir) {
+		return (dir.x === -this.lastDirection.x &&
+						dir.y === -this.lastDirection.y);
+	}
+
+	Board.prototype.hasApple = function (dir) {
+		var newPos = {x: this.head.x + dir.x,
+									y: this.head.y + dir.y};
+
 		for (var i = 0; i < this.apples.length, i++) {
 			var apple = this.apples[i];
+
 			if (apple.x === newPos.x && apple.y === newPos.y) {
-				this.addSegment(newPos.x, newPos.y);
+				return true;
 			}
 		}
 
-		// Update all coordinates.
+		return false;
+	}
+
+	Board.prototype.slide = function (dir) {
 		var runner = this.head;
+
 		while (runner.child) {
 			runner.child.x = runner.x;
 			runner.child.y = runner.y;
 		}
+
 		this.head.x += dir.x;
 		this.head.y += dir.y;
-
-		// Update this.direction.
-		// If eating apple, add segment.
-
 	}
 
 	Board.prototype.addSegment = function (x, y) {
@@ -51,4 +72,4 @@ var Board = (function () {
 	}
 
 	return Board;
-})()
+})();
