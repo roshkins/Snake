@@ -1,12 +1,13 @@
 var Board = (function () {
 
-	function Board () {
+	function Board (dim) {
 		this.head = new Board.Segment(4, 4);
 		this.lastDirection = { x: 0, y: 0};
 		this.segments = [this.head];
 		this.apples = [];
 		this.apple(5, 5);
-		this.dim = 10;
+		this.direction = { x: 0, y: 0};
+		this.dim = dim;
 	};
 
 	Board.Segment = function (x, y) {
@@ -55,9 +56,13 @@ var Board = (function () {
 		console.log(board);
 	}
 
+	Board.prototype.setDirection = function (x, y) {
+		this.direction = {x: x, y: y};
+	}
+
 	//dir is unit vector {x: x, y: y}.
-	Board.prototype.move = function (x, y) {
-		var dir = (x != null && y != null) ? {x: x, y: y} : this.lastDirection;
+	Board.prototype.move = function () {
+		var dir = this.direction || this.lastDirection;
 
 		if (this.isInvalidDir(dir)) {
 			console.log("Invalid move!");
@@ -84,6 +89,7 @@ var Board = (function () {
 		}
 		this.slide(dir);
 		this.lastDirection = dir;
+		this.direction = null;
 		return true;
 	}
 
@@ -133,13 +139,15 @@ var Board = (function () {
 	return Board;
 })();
 
-var b = new Board();
+var b = new Board(10);
 console.log();
 b.display();
-b.move(1, 0);
+b.setDirection(1, 0);
+b.move();
 console.log();
 b.display();
-b.move(0, 1);
+b.setDirection(0, 1);
+b.move();
 console.log();
 b.display();
 b.move();
