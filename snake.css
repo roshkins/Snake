@@ -1,0 +1,12 @@
+.bodyPart {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	background-color: red;
+}
+
+body {
+	margin: 0px;
+	border: 0px;
+	padding: 0px;
+}
